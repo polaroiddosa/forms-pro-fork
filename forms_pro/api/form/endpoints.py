@@ -44,6 +44,12 @@ def get_form(form_id: str) -> dict:
         "Form",
         form_id,
     )
+    # get_form is public so published forms can render for visitors. A form that is not
+    # published (a draft, or taken offline) is only given to people who may read it.
+    # Added 2026-11-14: before this a draft's title and questions were readable by anyone
+    # who knew the form id.
+    if not form.is_published and not frappe.has_permission("Form", "read", doc=form):
+        frappe.throw(_("Form not found"), frappe.DoesNotExistError)
     return {
         "name": form.name,
         "title": form.title,
@@ -81,19 +87,32 @@ def get_form_for_edit(form_id: str) -> dict:
     return get_form(form_id)
 
 
-@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
+MAX_LINK_OPTIONS = 200
+
+
+@frappe.whitelist()
 def get_link_field_options(
     doctype: str,
     filters: dict | None = None,
     page_length: int = 20,
 ) -> list[str]:
+    """Options for a link question: name and title of records of `doctype`.
+
+    Changed 2026-11-14: this used to be open to anyone without a login and read with
+    ``frappe.get_all`` (which skips permission checks), so a visitor on the internet could list
+    the names or titles of leads, users or call logs. Now the caller must be signed in and must
+    have read permission on `doctype`, the read is permission-checked, and the size is capped.
+    The academy builder offers no link question type, so nothing it uses depends on guest access.
+    """
+    if not frappe.has_permission(doctype, "read"):
+        frappe.throw(_("You do not have read permission on {0}").format(_(doctype)), frappe.PermissionError)
     meta = frappe.get_meta(doctype)
     title_field = meta.title_field or "name"
 
-    results = frappe.get_all(
+    results = frappe.get_list(
         doctype=doctype,
         filters=filters or {},
-        page_length=page_length,
+        page_length=min(max(int(page_length or 20), 1), MAX_LINK_OPTIONS),
         fields=["name as value", f"{title_field} as label"],
     )
     return results
@@ -233,8 +252,10 @@ def get_doctype_list() -> list[str]:
     )
 
 
-@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
+@frappe.whitelist()
 def get_doctype_fields(doctype: str) -> list:
+    # Changed 2026-11-14: was open to anyone without a login (it returned the field list of any
+    # record type). The builder is the only caller, and it is signed in.
     doctype = frappe.get_doc("DocType", doctype)
     fields = [
         field

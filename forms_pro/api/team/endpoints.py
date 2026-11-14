@@ -32,9 +32,14 @@ def get_team_for_manage(team_id: str) -> dict:
 
 
 @frappe.whitelist()
+@require_permission("FP Team", "read", param="team_id")
 def get_team_forms(team_id: str) -> list[GetTeamFormsResponseSchema]:
     """
     Get the list of forms for the current team
+
+    Requires ``read`` permission on the FP Team (HTTP 403 otherwise, HTTP 404 when the team
+    does not exist). Added 2026-11-14: before this any logged-in user who knew a team id
+    could list that team's forms.
 
     Args:
         team_id: ID of the team

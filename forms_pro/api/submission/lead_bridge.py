@@ -112,15 +112,28 @@ def _add_comment(lead_name: str, content: str) -> None:
     ).insert(ignore_permissions=True)
 
 
+def phone_digits(value) -> str:
+    """Only the digits of a phone number, so spaces, dashes and brackets do not matter
+    ("+91 90000 00002", "+91-9000000002" and "+919000000002" are the same number)."""
+    return "".join(ch for ch in str(value or "") if ch.isdigit())
+
+
 def flag_duplicates(lead, form_title: str) -> list[str]:
-    """Exact `mobile_no` match (no normalisation, as in the academy script). Nothing is deleted."""
-    if not lead.get("mobile_no"):
+    """Same phone (digits only: spaces, dashes and brackets are ignored) as another lead.
+
+    Changed 2026-11-14 (to-do from the staging test): it used to compare the exact typed text, so
+    "+91 9000000002" and "+919000000002" were not seen as the same number. A number with no
+    digits, or with fewer than 7, is never matched. The country code still counts ("91..." and
+    "..." differ), because the form's phone box always adds one. Nothing is deleted.
+    """
+    digits = phone_digits(lead.get("mobile_no"))
+    if len(digits) < 7:
         return []
-    others = frappe.get_all(
-        LEAD_DOCTYPE,
-        filters={"mobile_no": lead.mobile_no, "name": ["!=", lead.name]},
+    others = frappe.db.sql(
+        f"select name from `tab{LEAD_DOCTYPE}` where name != %s and mobile_no is not null and mobile_no != '' "
+        "and REGEXP_REPLACE(mobile_no, '[^0-9]', '') = %s order by creation limit 3",
+        (lead.name, digits),
         pluck="name",
-        limit=3,
     )
     if not others:
         return []

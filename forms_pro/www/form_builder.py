@@ -13,6 +13,9 @@ CLOSING_SCRIPT_TAG_PATTERN = re.compile(r"</script\>")
 PUBLIC_FORM_PREFIX = "/f/"
 EDIT_MARKER = "/edit/"
 NOT_FOUND_TEMPLATE = "forms_pro/templates/form_not_found.html"
+NO_ACCESS_TEMPLATE = "forms_pro/templates/form_no_access.html"
+BUILDER_PREFIX = "/form-builder"
+BUILDER_ROLES = ("Forms Pro User", "System Manager")
 
 
 def get_context(context):
@@ -28,6 +31,22 @@ def get_context(context):
     if path.startswith(PUBLIC_FORM_PREFIX) and not public_form_exists(path):
         context.http_status_code = 404
         context.template = NOT_FOUND_TEMPLATE
+    elif is_builder_path(path) and not may_use_builder():
+        # A signed-in staff member without the builder role (for example a counsellor) gets a
+        # plain page, not the builder. Visitors who are not signed in keep the old behaviour.
+        context.http_status_code = 403
+        context.template = NO_ACCESS_TEMPLATE
+
+
+def is_builder_path(path: str) -> bool:
+    return path == BUILDER_PREFIX or path.startswith(BUILDER_PREFIX + "/")
+
+
+def may_use_builder() -> bool:
+    """True for a visitor who is not signed in (unchanged behaviour) and for people holding a builder role."""
+    if frappe.session.user == "Guest":
+        return True
+    return any(role in BUILDER_ROLES for role in frappe.get_roles(frappe.session.user))
 
 
 def _request_path() -> str:
