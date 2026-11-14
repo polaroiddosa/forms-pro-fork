@@ -1,0 +1,105 @@
+@import "./assets/Inter/inter.css";
+@import "frappe-ui/style.css";
+/* Academy brand fonts (contract C8). Served from public/brand (copied from the brand pack).
+   Fraunces = headings, Source Sans 3 = body. No external font request. */
+@font-face {
+    font-family: "Fraunces";
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url("/brand/font-display.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("/brand/font-body.woff2") format("woff2");
+}
+
+/* Visitor page theme: wrap the page in .ta-brand. Palette: navy #16213D, cobalt #1255AA,
+   cream #F6F0D2, yellow #F8C828, muted #4B5878, error #B3261E. frappe-ui colours are CSS
+   variables, so the overrides below recolour its buttons, inputs and text inside the wrapper. */
+.ta-brand {
+    --ta-navy: #16213d;
+    --ta-cobalt: #1255aa;
+    --ta-cream: #f6f0d2;
+    --ta-yellow: #f8c828;
+    --ta-muted: #4b5878;
+    --ta-error: #b3261e;
+
+    color-scheme: light;
+    font-family: "Source Sans 3", system-ui, sans-serif;
+    color: var(--ta-navy);
+    background: var(--ta-cream);
+
+    --surface-gray-1: #fbf8e6;
+    --surface-gray-7: var(--ta-navy);
+    --surface-gray-6: #223157;
+    --surface-gray-5: var(--ta-muted);
+    --ink-gray-9: var(--ta-navy);
+    --ink-gray-8: var(--ta-navy);
+    --ink-gray-7: var(--ta-navy);
+    --ink-gray-6: var(--ta-muted);
+    --ink-gray-5: var(--ta-muted);
+    --outline-gray-2: #b9bfcc;
+    --outline-gray-3: var(--ta-muted);
+    --ink-red-3: var(--ta-error);
+    --ink-red-4: var(--ta-error);
+    --surface-red-5: var(--ta-error);
+}
+
+.ta-brand h1,
+.ta-brand h2,
+.ta-brand h3,
+.ta-brand .ta-display {
+    font-family: "Fraunces", Georgia, serif;
+    color: var(--ta-navy);
+}
+
+.ta-brand button,
+.ta-brand input,
+.ta-brand textarea,
+.ta-brand select {
+    font-family: inherit;
+}
+
+/* Visible keyboard focus in the brand colour. */
+.ta-brand :focus-visible {
+    outline: 2px solid var(--ta-cobalt);
+    outline-offset: 2px;
+}
+
+.ta-brand a {
+    color: var(--ta-cobalt);
+}
+
+.form-description {
+    @apply w-full p-3;
+
+    h1,
+    h2,
+    h3 {
+        @apply text-xl font-bold;
+    }
+    h4,
+    h5 {
+        @apply text-lg font-bold;
+    }
+    h6 {
+        @apply text-base font-bold;
+    }
+    p,
+    li {
+        @apply text-base font-normal;
+    }
+
+    .is-empty {
+        @apply text-base font-normal;
+    }
+}
+
+.form-container-simple {
+    @apply space-y-4 shadow-[0_0_10px_0_rgba(0,0,0,0.1)] bg-surface-white border rounded-lg p-6 max-w-screen-md mx-auto;
+}

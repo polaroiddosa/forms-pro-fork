@@ -1,0 +1,28 @@
+import { Files } from "@lucide/vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import type { SidebarProps } from "frappe-ui";
+
+type SidebarSectionProps = NonNullable<
+  SidebarProps["sections"]
+> extends (infer T)[]
+  ? T
+  : never;
+
+export function useSidebarItems() {
+  const route = useRoute();
+  const isActive = (path: string) => route.path === path;
+
+  return computed((): SidebarSectionProps[] => [
+    {
+      items: [
+        {
+          label: "My forms",
+          to: "/form-builder",
+          icon: Files,
+          isActive: isActive("/form-builder"),
+        },
+      ],
+    },
+  ]);
+}

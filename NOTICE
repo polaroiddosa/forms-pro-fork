@@ -1,0 +1,22 @@
+Forms Pro fork for Transparent Academy
+======================================
+
+Upstream:   https://github.com/BuildWithHussain/forms_pro
+Commit:     17199d6 (shallow clone, imported 2026-11-14)
+Licence:    AGPL-3.0 (see LICENSE, kept unchanged from upstream)
+
+This is a modified version of the upstream work. Source of this modified
+version must be offered to every user who uses it over a network (AGPL-3.0
+section 13).
+
+Modifications (append one line per change, newest last; say which track/date):
+- modified for Transparent Academy: routes changed (builder /forms -> /form-builder,
+  public /forms/p/<route> -> /f/<route>; www page forms -> form-builder). 2026-11-14, track F1.
+  Details: ../ROUTE-CHANGES.md
+- 2026-11-14, tracks F2 to F4 and integration: consent tick required on every public form (fixed wording);
+  public submissions create a CRM Lead (consent, source, duplicate flag, answers note); private guest file uploads
+  with type, size and content checks; rate limit; answers table API and answers screen; Single Choice question type;
+  simplified builder (10 question types, hidden developer fields, "Show only if" picker, no Team); academy brand
+  (logo, colours, fonts) and footer; optional "Source code" footer link from site config `forms_pro_source_url`;
+  blank multiple-choice answers stored as NULL; www page Python module named form_builder.py.
+  Details: CHANGES-F2.md, CHANGES-F3.md, CHANGES-F4.md, ROUTE-CHANGES.md in the parent folder of this app.

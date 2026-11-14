@@ -1,0 +1,82 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.py~
+
+# Distribution / packaging
+.Python
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+tags
+MANIFEST
+
+# Environments
+.env
+.env.*
+!.env.example
+!.env.sample
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# IDEs and editors
+.vscode/
+.vs/
+.idea/
+.kdev4/
+*.kdev4
+*.DS_Store
+*.swp
+*.comp.js
+.wnf-lang-status
+*debug.log
+
+# Helix Editor
+.helix/
+
+# Aider AI Chat
+.aider*
+
+# Local AI tooling settings
+.claude/settings.local.json
+.agents/
+
+/forms_pro/public/frontend
+/forms_pro/www/form-builder.html
+/forms_pro/www/frontend.html
+/forms_pro/public/node_modules
+frontend/components.d.ts
+frontend/auto-imports.d.ts
+
+# Playwright
+frontend/e2e/auth/storageState.json
+frontend/e2e/test-results/
+frontend/e2e/playwright-report/
+.playwright-mcp
+
+skills-lock.json
+
+semgrep-rules/
+
+# Screenshots
+*.png

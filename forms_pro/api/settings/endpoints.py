@@ -1,0 +1,24 @@
+import frappe
+from frappe.core.doctype.navbar_settings.navbar_settings import get_app_logo
+
+
+@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
+def get_brand_logo() -> str:
+    """
+    Get the brand logo for the form.
+
+    Returns:
+        str: The brand logo of the website or the default app logo if brand logo is not set.
+    """
+    return str(get_app_logo())
+
+
+@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
+def get_website_settings() -> dict:
+    website_settings = frappe.get_doc("Website Settings")
+    form_settings = {
+        "disable_sign_up": website_settings.disable_signup,
+        # Licence footer link (contract C7): site config key forms_pro_source_url, "" if unset.
+        "source_url": frappe.conf.get("forms_pro_source_url") or "",
+    }
+    return form_settings
