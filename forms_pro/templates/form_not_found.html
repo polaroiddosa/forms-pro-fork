@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Form not available</title>
+  <link rel="icon" href="/assets/forms_pro/images/favicon.ico" />
+  <style>
+    @font-face { font-family: "Fraunces"; src: url("/assets/forms_pro/frontend/brand/font-display.woff2") format("woff2"); font-display: swap; }
+    @font-face { font-family: "Source Sans 3"; src: url("/assets/forms_pro/frontend/brand/font-body.woff2") format("woff2"); font-display: swap; }
+    :root { --navy: #16213d; --cobalt: #1255aa; --cream: #f6f0d2; --muted: #4b5878; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; display: flex; flex-direction: column; background: var(--cream); color: var(--navy); font-family: "Source Sans 3", system-ui, sans-serif; }
+    header { width: 100%; max-width: 48rem; margin: 0 auto; padding: 1.5rem 1rem 0.5rem; }
+    header img { height: 3.5rem; width: auto; }
+    main { flex: 1; width: 100%; max-width: 48rem; margin: 0 auto; padding: 1rem; }
+    .card { background: #fbf8e6; border: 1px solid #b9bfcc; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+    h1 { font-family: "Fraunces", Georgia, serif; font-size: 1.75rem; margin: 0 0 0.75rem; color: var(--navy); }
+    p { font-size: 1.0625rem; line-height: 1.5; margin: 0 0 1rem; color: var(--muted); }
+    a { color: var(--cobalt); }
+    a:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" aria-label="Transparent Academy"><img src="/assets/forms_pro/frontend/brand/logo.svg" alt="Transparent Academy" /></a>
+  </header>
+  <main>
+    <div class="card" data-form-not-found>
+      <h1>This form is not available</h1>
+      <p>The link may be wrong, or the form is not open right now. Please check the link you were given, or ask the person who sent it for a new one.</p>
+    </div>
+  </main>
+</body>
+</html>

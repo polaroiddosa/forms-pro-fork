@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Badge } from "frappe-ui";
-import { FileText } from "@lucide/vue";
-import { computed } from "vue";
+import { Badge, Button } from "frappe-ui";
+import { FileText, Link as LinkIcon, Check } from "@lucide/vue";
+import { computed, ref } from "vue";
+import { toast } from "vue-sonner";
+import { answersLabel, copyText, publicFormLink } from "@/utils/publicLink";
 
 const props = defineProps({
     form: {
@@ -13,6 +15,21 @@ const props = defineProps({
 const formattedDate = computed(() => {
     return new Date(props.form.creation).toLocaleDateString();
 });
+
+const answersText = computed(() => answersLabel(props.form.submission_count));
+const link = computed(() => publicFormLink(props.form.route, window.location.origin));
+
+const copied = ref(false);
+async function copyLink() {
+    if (!link.value) return;
+    if (await copyText(link.value)) {
+        copied.value = true;
+        toast.success("Link copied");
+        setTimeout(() => (copied.value = false), 2000);
+    } else {
+        toast.error("Could not copy the link");
+    }
+}
 </script>
 <template>
     <div
@@ -30,6 +47,20 @@ const formattedDate = computed(() => {
                 />
                 <p class="text-sm text-ink-gray-4">{{ formattedDate }}</p>
             </div>
+            <p class="text-sm text-ink-gray-6" data-form-card-answers>{{ answersText }}</p>
         </div>
+        <Button
+            v-if="link"
+            class="w-fit"
+            variant="subtle"
+            data-form-card-copy-link
+            :label="copied ? 'Copied' : 'Copy link'"
+            @click.stop="copyLink"
+        >
+            <template #prefix>
+                <Check v-if="copied" class="w-4 h-4" />
+                <LinkIcon v-else class="w-4 h-4" />
+            </template>
+        </Button>
     </div>
 </template>

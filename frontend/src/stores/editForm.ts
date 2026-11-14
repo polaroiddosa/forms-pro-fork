@@ -19,6 +19,7 @@ import { FormField, Fieldtype } from "@/types/formfield";
 import { Form } from "@/types/form";
 import { toast } from "vue-sonner";
 import { dialog } from "@/utils/dialog";
+import { findDuplicateQuestions, duplicateQuestionDialog } from "@/utils/duplicateQuestions";
 
 export const useEditForm = defineStore("editForm", () => {
   const formResource = ref<any>(null);
@@ -113,29 +114,6 @@ export const useEditForm = defineStore("editForm", () => {
     formResource.value = null;
   }
 
-  function findDuplicateFieldnames(): { label: string; fieldname: string }[] {
-    const allFields = formResource.value?.doc?.fields || [];
-    const seen = new Map<string, FormField>();
-    const duplicates: { label: string; fieldname: string }[] = [];
-
-    for (const field of allFields) {
-      const name = field.fieldname?.trim()
-        ? field.fieldname
-        : scrubFieldname(field.label);
-
-      if (seen.has(name)) {
-        const existing = seen.get(name)!;
-        if (!duplicates.some((d) => d.fieldname === name)) {
-          duplicates.push({ label: existing.label, fieldname: name });
-        }
-        duplicates.push({ label: field.label, fieldname: name });
-      }
-      seen.set(name, field);
-    }
-
-    return duplicates;
-  }
-
   async function save() {
     if (!isUnsaved.value) {
       toast.info("No changes to save");
@@ -147,17 +125,11 @@ export const useEditForm = defineStore("editForm", () => {
       return Promise.reject(new Error("No form resource available"));
     }
 
-    const duplicates = findDuplicateFieldnames();
+    const duplicates = findDuplicateQuestions(formResource.value?.doc?.fields || []);
     if (duplicates.length > 0) {
-      const fieldList = duplicates
-        .map((d) => `<b>${d.label} (${d.fieldname})</b>`)
-        .join(", ");
-      await dialog.alert({
-        title: "Duplicate Fieldnames",
-        message: `These fields will have duplicate fieldnames: ${fieldList}. Please change one of the labels or set a unique fieldname.`,
-        html: true,
-      });
-      return Promise.reject(new Error("Duplicate fieldnames"));
+      const { title, message } = duplicateQuestionDialog(duplicates);
+      await dialog.alert({ title, message, html: true });
+      return Promise.reject(new Error("Duplicate questions"));
     }
 
     formResource.value.doc.fields.forEach((field: FormField, index: number) => {

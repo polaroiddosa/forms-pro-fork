@@ -20,6 +20,7 @@ class GetTeamFormsResponseSchema(BaseModel):
     creation: datetime = Field(description="Creation date of the form")
     modified: datetime = Field(description="Modification date of the form")
     linked_team_id: str = Field(description="Team ID of the form")
+    submission_count: int = Field(default=0, description="Number of submitted answers for the form")
 
     @field_validator("creation", "modified", mode="before")
     @classmethod
@@ -110,8 +111,22 @@ def get_team_forms(team_id: str) -> list[GetTeamFormsResponseSchema]:
             "creation",
             "modified",
             "linked_team_id",
+            "linked_doctype",
         ],
     )
 
-    data = [GetTeamFormsResponseSchema.model_validate(form).model_dump() for form in forms]
+    data = []
+    for form in forms:
+        form["submission_count"] = count_submissions(form.get("linked_doctype"), form["name"])
+        data.append(GetTeamFormsResponseSchema.model_validate(form).model_dump())
     return data
+
+
+def count_submissions(linked_doctype: str | None, form_id: str) -> int:
+    """Answers count shown on a My forms card: Submitted rows only, the same rows the answers table lists."""
+    if not linked_doctype or not frappe.db.exists("DocType", linked_doctype):
+        return 0
+    return frappe.db.count(
+        linked_doctype,
+        {"fp_linked_form": form_id, "fp_submission_status": "Submitted"},
+    )
